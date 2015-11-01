@@ -1,0 +1,16 @@
+[
+{
+  "modid": "gimmetime",
+  "name": "GimmeTime",
+  "description": "Adds an ingame clock and an alarm system",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["iTitus"],
+  "credits": "Mojang AB, the Forge and FML team, all the modders and the whole rest of the community :D",
+  "logoFile": "assets/gimmetime/textures/logo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]
