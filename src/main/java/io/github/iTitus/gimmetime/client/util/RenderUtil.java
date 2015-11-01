@@ -19,9 +19,9 @@ public class RenderUtil {
 
 	public static void drawClock(double x, double y, double radius) {
 
-		GL11.glEnable(GL11.GL_BLEND);
+		//GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		//GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		setColor(ConfigHandler.color);
 		drawHollowCircleShort(x, y, radius);
@@ -32,7 +32,7 @@ public class RenderUtil {
 			drawSeconds(x, y, radius);
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glDisable(GL11.GL_BLEND);
+		//GL11.glDisable(GL11.GL_BLEND);
 
 		drawNumbers(x, y, radius);
 
