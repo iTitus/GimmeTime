@@ -1,6 +1,5 @@
-package io.github.iTitus.gimmetime.client.gui;
+package io.github.iTitus.gimmetime.client.gui.alarm;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -16,34 +15,33 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class GuiAlarmList extends GuiListExtended {
 
 	private final GuiScreenAlarmConfig parent;
-	private ArrayList<GuiAlarm> alarmList;
+	private final List<GuiAlarmEntry> alarmList;
 	private int indexSelected;
 
-	public GuiAlarmList(GuiScreenAlarmConfig parent, Minecraft mc, int width,
-	                    int height, int top, int bottom, int slotHeight) {
+	public GuiAlarmList(GuiScreenAlarmConfig parent, Minecraft mc, int width, int height, int top, int bottom, int slotHeight) {
 		super(mc, width, height, top, bottom, slotHeight);
 		this.parent = parent;
-		alarmList = new ArrayList<GuiAlarm>();
-		indexSelected = -1;
+		this.alarmList = Lists.newArrayList();
+		this.indexSelected = -1;
 	}
 
-	public List<GuiAlarm.Alarm> getAlarms() {
+	public List<Alarm> getAlarms() {
 
-		List<GuiAlarm.Alarm> alarms = Lists.newArrayList();
+		List<Alarm> alarms = Lists.newArrayList();
 
-		for (GuiAlarm alarm : alarmList) {
+		for (GuiAlarmEntry alarm : alarmList) {
 			alarms.add(alarm.getAlarm());
 		}
 
 		return alarms;
 	}
 
-	public void setAlarms(List<GuiAlarm.Alarm> arrayList) {
+	public void setAlarms(List<Alarm> arrayList) {
 
 		alarmList.clear();
 
-		for (GuiAlarm.Alarm alarm : arrayList) {
-			alarmList.add(new GuiAlarm(alarm, parent));
+		for (Alarm alarm : arrayList) {
+			alarmList.add(new GuiAlarmEntry(alarm, parent));
 		}
 
 	}
@@ -75,6 +73,7 @@ public class GuiAlarmList extends GuiListExtended {
 
 	@Override
 	protected void drawContainerBackground(Tessellator tessellator) {
+		//NO-OP
 	}
 
 	@Override

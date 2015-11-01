@@ -2,14 +2,11 @@ package io.github.iTitus.gimmetime.common.util;
 
 public class MathUtil {
 
-	public static final float PI = (float) Math.PI;
-
-	public static double degToRad(double deg) {
-		return (deg / 180F) * Math.PI;
-	}
+	public static final float DEG_TO_RAD = (float) (Math.PI / 180);
+	public static final float PI_HALF = (float) (Math.PI / 2);
 
 	public static float degToRad(float deg) {
-		return (deg / 180F) * PI;
+		return deg * DEG_TO_RAD;
 	}
 
 }

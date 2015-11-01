@@ -1,8 +1,10 @@
-package io.github.iTitus.gimmetime.client.gui;
+package io.github.iTitus.gimmetime.client.gui.alarm;
 
+import io.github.iTitus.gimmetime.client.gui.GuiScreenClockConfig;
 import io.github.iTitus.gimmetime.client.handler.AlarmHandler;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiListExtended.IGuiListEntry;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
@@ -26,15 +28,12 @@ public class GuiScreenAlarmConfig extends GuiScreen implements GuiYesNoCallback 
 
 	@Override
 	public void confirmClicked(boolean accepted, int index) {
-
 		if (accepted) {
 			AlarmHandler.remove(index);
 			alarmList.select(-1);
 			alarmList.setAlarms(AlarmHandler.getAlarms());
 		}
-
 		mc.displayGuiScreen(this);
-
 	}
 
 	@Override
@@ -54,8 +53,7 @@ public class GuiScreenAlarmConfig extends GuiScreen implements GuiYesNoCallback 
 	@Override
 	public void initGui() {
 
-		alarmList = new GuiAlarmList(this, mc, width, height, 48, height - 48,
-				25);
+		alarmList = new GuiAlarmList(this, mc, width, height, 48, height - 48, 25);
 		alarmList.setAlarms(AlarmHandler.getAlarms());
 
 		int id = 0;
@@ -90,50 +88,43 @@ public class GuiScreenAlarmConfig extends GuiScreen implements GuiYesNoCallback 
 			editButton.enabled = true;
 			deleteButton.enabled = true;
 		}
-
 	}
 
 	@Override
 	protected void actionPerformed(GuiButton button) {
-
+		IGuiListEntry entry = alarmList.getListEntry(alarmList.getSelected());
 		if (button.enabled) {
 			switch (button.id) {
 				case 0:
+					if (entry == null)
+						break;
 				case 1:
-					GuiAlarm guiAlarm = (GuiAlarm) alarmList.getListEntry(alarmList
-							.getSelected());
-					mc.displayGuiScreen(new GuiScreenEditAlarm(this, alarmList
-							.getSelected(), ((guiAlarm != null) ? (guiAlarm
-							.getAlarm()) : null), button.id == 1));
+					mc.displayGuiScreen(new GuiScreenEditAlarm(this, ((button.id == 0 && entry instanceof GuiAlarmEntry) ? (((GuiAlarmEntry) entry).getAlarm()) : null), button.id == 1));
 					break;
 				case 2:
-					mc.displayGuiScreen(new GuiYesNo(
-							this,
-							StatCollector
-									.translateToLocal("gui.alarmConfig.delete.question"),
-							StatCollector.translateToLocalFormatted(
-									"gui.alarmConfig.delete.warning",
-									((GuiAlarm) alarmList.getListEntry(alarmList
-											.getSelected())).getAlarm().getTitle()),
-							alarmList.getSelected()));
+					if (entry instanceof GuiAlarmEntry)
+						mc.displayGuiScreen(new GuiYesNo(
+								this,
+								StatCollector.translateToLocal("gui.alarmConfig.delete.question"),
+								StatCollector.translateToLocalFormatted(((GuiAlarmEntry) entry).getAlarm().getTitle()),
+								alarmList.getSelected()));
 					break;
 				default:
 					mc.displayGuiScreen(parent);
 			}
 		}
-
 	}
 
 	@Override
-	protected void mouseClicked(int x, int y, int mouseButton) {
-		super.mouseClicked(x, y, mouseButton);
-		alarmList.func_148179_a(x, y, mouseButton);
+	protected void mouseClicked(int x, int y, int button) {
+		if (button != 0 || !alarmList.func_148179_a(x, y, button))
+			super.mouseClicked(x, y, button);
 	}
 
 	@Override
 	protected void mouseMovedOrUp(int x, int y, int type) {
-		super.mouseMovedOrUp(x, y, type);
-		alarmList.func_148181_b(x, y, type);
+		if (type != 0 || !alarmList.func_148181_b(x, y, type))
+			super.mouseMovedOrUp(x, y, type);
 	}
 
 }

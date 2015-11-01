@@ -12,17 +12,11 @@ public class TimeUtil {
 	public static DateFormat dateFormat = new SimpleDateFormat();
 
 	public static int convertToAMPMIfNecessary(int hour) {
-
-		if (!ConfigHandler.am_pm || (hour < 12 && hour > 0))
+		if (!ConfigHandler.am_pm || (hour <= 12 && hour > 0))
 			return hour;
-
-		if (hour == 0 || hour == 12)
-			hour = 12;
-		else
-			hour -= 12;
-
-		return hour;
-
+		if (hour == 0)
+			return 12;
+		return hour - 12;
 	}
 
 	public static String[] getAllHours() {
@@ -52,7 +46,7 @@ public class TimeUtil {
 		return (isPM()) ? ("PM") : ("AM");
 	}
 
-	public static float getHour() {
+	public static int getHour() {
 		return Calendar.getInstance().get(Calendar.HOUR);
 	}
 
@@ -68,41 +62,43 @@ public class TimeUtil {
 		return Calendar.getInstance().get(Calendar.SECOND);
 	}
 
+	public static int getMillis() {
+		return Calendar.getInstance().get(Calendar.MILLISECOND);
+	}
+
 	public static String getTime() {
+		return getTime(ConfigHandler.separator, ConfigHandler.am_pm, ConfigHandler.seconds);
+	}
 
+	public static String getTime(String separator, boolean am_pm, boolean seconds) {
 		StringBuilder sb = new StringBuilder();
-
-		sb.append(make2Digits(Calendar.getInstance().get(
-				(ConfigHandler.am_pm) ? (Calendar.HOUR)
-						: (Calendar.HOUR_OF_DAY))));
-
-		sb.append(ConfigHandler.separator);
-
+		sb.append(make2Digits(am_pm ? getHour() : getHourOfDay()));
+		sb.append(separator);
 		sb.append(make2Digits(getMin()));
-
-		if (ConfigHandler.seconds) {
-			sb.append(ConfigHandler.separator);
+		if (seconds) {
+			sb.append(separator);
 			sb.append(make2Digits(getSec()));
 		}
-
-		if (ConfigHandler.am_pm)
+		if (am_pm)
 			sb.append(" " + getAMPM());
-
 		return sb.toString();
 	}
 
+	public static String getAlarmTimeString() {
+		return getTimeString(getHourOfDay(), getMin(), ConfigHandler.am_pm);
+	}
+
 	public static String getTimeString(int hour, int min) {
+		return getTimeString(hour, min, ConfigHandler.am_pm);
+	}
+
+	public static String getTimeString(int hour, int min, boolean am_pm) {
 		StringBuilder sb = new StringBuilder();
-
 		sb.append(make2Digits(convertToAMPMIfNecessary(hour)));
-
 		sb.append(ConfigHandler.separator);
-
 		sb.append(make2Digits(min));
-
-		if (ConfigHandler.am_pm)
+		if (am_pm)
 			sb.append(" " + ((hour >= 12) ? ("PM") : ("AM")));
-
 		return sb.toString();
 	}
 
@@ -115,11 +111,11 @@ public class TimeUtil {
 	}
 
 	public static boolean isPM() {
-		return Calendar.getInstance().get(Calendar.AM_PM) == 1;
+		return Calendar.getInstance().get(Calendar.AM_PM) == Calendar.PM;
 	}
 
 	public static String make2Digits(int number) {
-		return StringUtil.makeNDigits(number + "", 2, "0");
+		return StringUtil.makeNDigits(number + "", 2, '0');
 	}
 
 }

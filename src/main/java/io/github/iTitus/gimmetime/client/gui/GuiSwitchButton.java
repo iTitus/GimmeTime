@@ -14,19 +14,15 @@ public class GuiSwitchButton extends GuiButton {
 	private String[] options;
 	private String title;
 
-	public GuiSwitchButton(int id, int x, int y, int width, int height,
-	                       String title, int defaultIndex, String[] options) {
+	public GuiSwitchButton(int id, int x, int y, int width, int height, String title, int defaultIndex, String[] options) {
 		super(id, x, y, width, height, title);
 		this.options = options;
 		this.title = title;
 		currentIndex = defaultIndex;
-		displayString = ((this.title != null && this.title != "") ? (this.title + ": ")
-				: "")
-				+ this.options[currentIndex];
+		displayString = ((this.title != null && this.title != "") ? (this.title + ": ") : "") + this.options[currentIndex];
 	}
 
-	public GuiSwitchButton(int id, int x, int y, String title,
-	                       int defaultIndex, String[] options) {
+	public GuiSwitchButton(int id, int x, int y, String title, int defaultIndex, String[] options) {
 		this(id, x, y, 200, 20, title, defaultIndex, options);
 	}
 
@@ -36,23 +32,17 @@ public class GuiSwitchButton extends GuiButton {
 
 	@Override
 	public boolean mousePressed(Minecraft mc, int x, int y) {
-
-		boolean ret = super.mousePressed(mc, x, y);
-
-		if (ret)
+		boolean b = super.mousePressed(mc, x, y);
+		if (b)
 			nextIndex(GuiScreen.isShiftKeyDown() ? 10 : 1);
-
-		return ret;
+		return b;
 	}
 
 	public boolean mouseRightPressed(Minecraft mc, int x, int y) {
-
-		boolean ret = super.mousePressed(mc, x, y);
-
-		if (ret)
+		boolean b = super.mousePressed(mc, x, y);
+		if (b)
 			nextIndex(GuiScreen.isShiftKeyDown() ? -10 : -1);
-
-		return ret;
+		return b;
 	}
 
 	public void nextIndex(int steps) {
@@ -65,7 +55,6 @@ public class GuiSwitchButton extends GuiButton {
 		while (currentIndex < 0)
 			currentIndex += options.length;
 
-		displayString = ((title != null && title != "") ? (title + ": ") : (""))
-				+ this.options[currentIndex];
+		displayString = ((title != null && title != "") ? (title + ": ") : ("")) + this.options[currentIndex];
 	}
 }

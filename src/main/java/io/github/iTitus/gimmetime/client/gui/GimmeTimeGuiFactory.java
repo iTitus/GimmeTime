@@ -13,8 +13,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class GimmeTimeGuiFactory implements IModGuiFactory {
 
 	@Override
-	public RuntimeOptionGuiHandler getHandlerFor(
-			RuntimeOptionCategoryElement element) {
+	public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
 		return null;
 	}
 

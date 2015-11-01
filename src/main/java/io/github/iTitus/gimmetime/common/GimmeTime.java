@@ -1,4 +1,6 @@
-package io.github.iTitus.gimmetime;
+package io.github.iTitus.gimmetime.common;
+
+import org.apache.logging.log4j.Logger;
 
 import io.github.iTitus.gimmetime.common.proxy.CommonProxy;
 
@@ -25,6 +27,8 @@ public class GimmeTime {
 	@SidedProxy(clientSide = CLIENT_PROXY, serverSide = SERVER_PROXY)
 	public static CommonProxy proxy;
 
+	public static Logger log;
+
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		proxy.init(event);
@@ -37,6 +41,7 @@ public class GimmeTime {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		log = event.getModLog();
 		proxy.preInit(event);
 	}
 

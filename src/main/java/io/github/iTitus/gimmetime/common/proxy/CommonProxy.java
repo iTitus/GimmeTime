@@ -2,7 +2,7 @@ package io.github.iTitus.gimmetime.common.proxy;
 
 import java.io.File;
 
-import io.github.iTitus.gimmetime.GimmeTime;
+import io.github.iTitus.gimmetime.common.GimmeTime;
 import io.github.iTitus.gimmetime.common.handler.ConfigHandler;
 
 import net.minecraft.entity.player.EntityPlayer;

@@ -2,11 +2,11 @@ package io.github.iTitus.gimmetime.client.proxy;
 
 import java.io.File;
 
-import io.github.iTitus.gimmetime.GimmeTime;
 import io.github.iTitus.gimmetime.client.gui.GuiScreenClockConfig;
 import io.github.iTitus.gimmetime.client.handler.AlarmHandler;
 import io.github.iTitus.gimmetime.client.handler.KeyHandler;
 import io.github.iTitus.gimmetime.client.render.hud.RenderClockHUD;
+import io.github.iTitus.gimmetime.common.GimmeTime;
 import io.github.iTitus.gimmetime.common.lib.LibGUI;
 import io.github.iTitus.gimmetime.common.proxy.CommonProxy;
 

@@ -1,18 +1,21 @@
 package io.github.iTitus.gimmetime.client.render.hud;
 
+
 import java.util.Queue;
 
 import com.google.common.collect.Queues;
 
-import org.lwjgl.input.Keyboard;
-
-import io.github.iTitus.gimmetime.client.gui.GuiAlarm;
+import io.github.iTitus.gimmetime.client.gui.alarm.Alarm;
+import io.github.iTitus.gimmetime.client.handler.AlarmHandler;
 import io.github.iTitus.gimmetime.client.handler.KeyHandler;
 import io.github.iTitus.gimmetime.client.util.RenderUtil;
 import io.github.iTitus.gimmetime.client.util.TimeUtil;
 import io.github.iTitus.gimmetime.common.handler.ConfigHandler;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.StatCollector;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -27,10 +30,10 @@ import net.minecraftforge.common.MinecraftForge;
 public class RenderClockHUD {
 
 	public static final RenderClockHUD INSTANCE = new RenderClockHUD();
-	private final Queue<GuiAlarm.Alarm> alarmsToRender = Queues.newConcurrentLinkedQueue();
-	private GuiAlarm.Alarm currentAlarm, previousAlarm;
+	private final Queue<Alarm> alarmsToRender = Queues.newConcurrentLinkedQueue();
+	private Alarm currentAlarm, previousAlarm;
 
-	public static void add(GuiAlarm.Alarm alarm) {
+	public static void add(Alarm alarm) {
 		INSTANCE.alarmsToRender.offer(alarm);
 		if (INSTANCE.currentAlarm == null)
 			nextAlarm();
@@ -49,37 +52,61 @@ public class RenderClockHUD {
 			INSTANCE.currentAlarm.setEnabled(false);
 		INSTANCE.previousAlarm = INSTANCE.currentAlarm;
 		INSTANCE.currentAlarm = INSTANCE.alarmsToRender.poll();
-		if (INSTANCE.previousAlarm != null
-				&& INSTANCE.previousAlarm.isRepeating())
+		if (INSTANCE.previousAlarm != null && INSTANCE.previousAlarm.isRepeating())
 			INSTANCE.previousAlarm.setEnabled(true);
+		AlarmHandler.save();
 	}
 
 	@SubscribeEvent
 	public void onRenderGameOverlayPost(Post event) {
 		if (event.type == ElementType.ALL) {
 
+			Minecraft mc = Minecraft.getMinecraft();
+			FontRenderer fr = mc.fontRenderer;
+			Profiler p = mc.mcProfiler;
+			p.startSection("gimmetime-hud");
+
 			switch (ConfigHandler.analog_digital) {
 				case 0: // None
 					break;
 				case 1: // Analog
-					RenderUtil.drawClock((!TimeUtil.isPM() || ConfigHandler.am_pm) ? 31 : 37, 34, 24);
+					p.startSection("clock");
+					RenderUtil.drawClock(32, 34, 24);
+					p.endSection();
 					break;
 				case 2: // Digital
-					Minecraft.getMinecraft().fontRenderer.drawString(TimeUtil.getTime(), 1, 1, ConfigHandler.color);
+					p.startSection("clock");
+					drawString(TimeUtil.getTime(), 1, 1);
+					p.endSection();
 					break;
 				case 3: // Both
-					RenderUtil.drawClock((!TimeUtil.isPM() || ConfigHandler.am_pm) ? 31 : 37, 34, 24);
-					Minecraft.getMinecraft().fontRenderer.drawString(TimeUtil.getTime(), (!TimeUtil.isPM() || ConfigHandler.am_pm) ? 62 : 74, 1, ConfigHandler.color);
+					p.startSection("clock");
+					RenderUtil.drawClock(32, 34, 24);
+					drawString(TimeUtil.getTime(), 64, 1);
+					p.endSection();
 					break;
 			}
 
 			if (currentAlarm != null) {
-				Minecraft.getMinecraft().fontRenderer.drawString(currentAlarm.getTitle() + " - " + TimeUtil.make2Digits(currentAlarm.getHour()) + ConfigHandler.separator + TimeUtil.make2Digits(currentAlarm.getMin()), (event.resolution.getScaledWidth() / 2) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(currentAlarm.getTitle() + " - " + TimeUtil.make2Digits(currentAlarm.getHour()) + ConfigHandler.separator + TimeUtil.make2Digits(currentAlarm.getMin())) / 2), (event.resolution.getScaledHeight() / 2) - (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 4), ConfigHandler.color);
-				Minecraft.getMinecraft().fontRenderer.drawString(StatCollector.translateToLocalFormatted("hud.alarmAlert.close", Keyboard.getKeyName(KeyHandler.getKeyBinding(KeyHandler.KEYBINDING_CLOCK).getKeyCode())), (event.resolution.getScaledWidth() / 2) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(StatCollector.translateToLocalFormatted("hud.alarmAlert.close", Keyboard.getKeyName(KeyHandler.getKeyBinding(KeyHandler.KEYBINDING_CLOCK).getKeyCode()))) / 2), (event.resolution.getScaledHeight() / 2) + (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - 2), ConfigHandler.color);
+				p.startSection("alarm");
+				String title = currentAlarm.getTitle() + " - " + TimeUtil.getAlarmTimeString();
+				drawString(title, (event.resolution.getScaledWidth() / 2) - (fr.getStringWidth(title) / 2), (event.resolution.getScaledHeight() / 2) - (fr.FONT_HEIGHT + 4));
+				String closeHint = StatCollector.translateToLocalFormatted("hud.alarmAlert.close", GameSettings.getKeyDisplayString(KeyHandler.INSTANCE.clock.getKeyCode()));
+				drawString(closeHint, (event.resolution.getScaledWidth() / 2) - (fr.getStringWidth(closeHint) / 2), (event.resolution.getScaledHeight() / 2) + (fr.FONT_HEIGHT - 2));
+				p.endSection();
 			}
+
+			p.endSection();
 
 		}
 
+	}
+
+	private void drawString(String string, int x, int y) {
+		if (ConfigHandler.shadows)
+			Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(string, x, y, ConfigHandler.color);
+		else
+			Minecraft.getMinecraft().fontRenderer.drawString(string, x, y, ConfigHandler.color);
 	}
 
 }

@@ -1,8 +1,6 @@
 ### GUI / HUD ###
 gui.config.subtitle=You can also (and better) edit the clock properties by pressing '%s' ingame
 
-gui.wheel.name=[WIP] Wheel of Fortune
-
 gui.clockConfig.name=Clock configuration
 gui.clockConfig.separator=Separator
 gui.clockConfig.clockFormat=Clock format
@@ -12,6 +10,9 @@ gui.clockConfig.clockFormat.digital=Only digital
 gui.clockConfig.clockFormat.both=Analog and digital
 gui.clockConfig.seconds=Seconds
 gui.clockConfig.am/pm=AM/PM
+gui.clockConfig.shadows=Render shadows
+gui.clockConfig.smoothSeconds=Smooth seconds
+gui.clockConfig.color=Color
 gui.clockConfig.color.red=Red
 gui.clockConfig.color.green=Green
 gui.clockConfig.color.blue=Blue

@@ -5,12 +5,10 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import org.apache.logging.log4j.Level;
-
-import io.github.iTitus.gimmetime.GimmeTime;
-import io.github.iTitus.gimmetime.client.gui.GuiAlarm.Alarm;
+import io.github.iTitus.gimmetime.client.gui.alarm.Alarm;
 import io.github.iTitus.gimmetime.client.render.hud.RenderClockHUD;
 import io.github.iTitus.gimmetime.client.util.TimeUtil;
+import io.github.iTitus.gimmetime.common.GimmeTime;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -18,7 +16,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
@@ -31,17 +28,13 @@ import net.minecraftforge.common.util.Constants.NBT;
 public class AlarmHandler {
 
 	private static final String TAG_ALARMS = "Alarms";
+
 	private static List<Alarm> alarms;
 	private static File alarmFile;
-	private int minLastChecked;
+	private static int minLastChecked;
 
 	public static void add(Alarm alarm) {
 		alarms.add(alarm);
-		save();
-	}
-
-	public static void editAlarm(int index, Alarm alarm) {
-		alarms.set(index, alarm);
 		save();
 	}
 
@@ -65,8 +58,7 @@ public class AlarmHandler {
 			loadAlarms(alarmFile);
 
 		} catch (Exception e) {
-			FMLLog.log(Level.ERROR, e, GimmeTime.MOD_ID
-					+ " has a problem loading its alarm configuration!");
+			GimmeTime.log.error("There was a problem loading the alarm configuration!", e);
 		}
 
 	}
@@ -82,8 +74,7 @@ public class AlarmHandler {
 		try {
 			saveAlarms();
 		} catch (Exception e) {
-			FMLLog.log(Level.ERROR, e, GimmeTime.MOD_ID
-					+ " has a problem editing its alarm configuration!");
+			GimmeTime.log.error("There was a problem saving the alarm configuration!", e);
 		}
 	}
 
@@ -98,7 +89,9 @@ public class AlarmHandler {
 		NBTTagList list = nbt.getTagList(TAG_ALARMS, NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < list.tagCount(); i++) {
-			alarms.add(Alarm.readFromNBT(list.getCompoundTagAt(i)));
+			Alarm alarm = new Alarm();
+			alarm.readFromNBT(list.getCompoundTagAt(i));
+			alarms.add(alarm);
 		}
 
 	}
@@ -107,7 +100,9 @@ public class AlarmHandler {
 		NBTTagList list = new NBTTagList();
 
 		for (Alarm alarm : alarms) {
-			list.appendTag(Alarm.writeToNBT(alarm));
+			NBTTagCompound nbt = new NBTTagCompound();
+			alarm.writeToNBT(nbt);
+			list.appendTag(nbt);
 		}
 
 		NBTTagCompound nbt = new NBTTagCompound();
@@ -137,7 +132,6 @@ public class AlarmHandler {
 			if (check(alarm))
 				showAlert(alarm);
 		}
-
 	}
 
 	private void showAlert(Alarm alarm) {
